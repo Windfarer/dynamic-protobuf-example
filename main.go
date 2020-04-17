@@ -12,9 +12,9 @@ import (
 func makeFileDescriptor() pref.FileDescriptor {
 	// make FileDescriptorProto
 	pb := &descriptorpb.FileDescriptorProto{
-		Syntax:      proto.String("proto3"),
-		Name:        proto.String("example.proto"),
-		Package:     proto.String("example"),
+		Syntax:  proto.String("proto3"),
+		Name:    proto.String("example.proto"),
+		Package: proto.String("example"),
 		MessageType: []*descriptorpb.DescriptorProto{
 			// define Foo message
 			&descriptorpb.DescriptorProto{
@@ -88,7 +88,6 @@ func makeFileDescriptor() pref.FileDescriptor {
 					},
 				},
 			},
-
 		},
 	}
 
@@ -104,7 +103,7 @@ func makeFooMsg(fd pref.FileDescriptor) *dynamicpb.Message {
 	fooMessageDescriptor := fd.Messages().ByName("Foo")
 	msg := dynamicpb.NewMessage(fooMessageDescriptor)
 	msg.Set(fooMessageDescriptor.Fields().ByName("id"), pref.ValueOfInt32(42))
-	msg.Set(fooMessageDescriptor.Fields().ByName("title"), pref.ValueOfString("aloha"))
+	msg.Set(fooMessageDescriptor.Fields().ByNumber(2), pref.ValueOfString("aloha"))
 	return msg
 }
 
@@ -112,7 +111,7 @@ func makeBarMsg(fd pref.FileDescriptor) *dynamicpb.Message {
 	barMessageDescriptor := fd.Messages().ByName("Bar")
 	msg := dynamicpb.NewMessage(barMessageDescriptor)
 	mf := barMessageDescriptor.Fields().ByName("bar_map")
-	mp:= msg.NewField(mf)
+	mp := msg.NewField(mf)
 
 	fooMsg := makeFooMsg(fd)
 
@@ -177,7 +176,7 @@ func useBazMsg(fd pref.FileDescriptor, data []byte) {
 	lf := bazMessageDescriptor.Fields().ByName("baz_list")
 	lst := msg.Get(lf).List()
 	length := lst.Len()
-	for i:= 0; i<length; i++ {
+	for i := 0; i < length; i++ {
 		ele := lst.Get(i)
 		fmt.Printf("index: %v value: %v  \n", i, ele.Message())
 	}
@@ -186,8 +185,8 @@ func useBazMsg(fd pref.FileDescriptor, data []byte) {
 func marshalMsg(msg *dynamicpb.Message) []byte {
 	var (
 		data []byte
-		err error
-		)
+		err  error
+	)
 	if data, err = proto.Marshal(msg); err != nil {
 		panic(err)
 	}
