@@ -1,0 +1,15 @@
+syntax = "proto3";
+package example;
+
+message Foo {
+    int32 id = 1;
+    string title = 2;
+}
+
+message Bar {
+    map<string,Foo> bar_map = 1;
+}
+
+message Baz {
+    repeated Foo baz_list = 1;
+}
