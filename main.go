@@ -10,26 +10,86 @@ import (
 )
 
 func makeFileDescriptor() pref.FileDescriptor {
-	var mt []*descriptorpb.DescriptorProto
-
-	// define Foo
-	fooDescriptorProto := makeFooMessageDescriptorProto()
-	mt = append(mt, fooDescriptorProto)
-
-	// define Bar
-	barDescriptorProto := makeBarMessageDescriptorProto()
-	mt = append(mt, barDescriptorProto)
-
-	// define Bar
-	bazDescriptorProto := makeBazMessageDescriptorProto()
-	mt = append(mt, bazDescriptorProto)
-
 	// make FileDescriptorProto
 	pb := &descriptorpb.FileDescriptorProto{
 		Syntax:      proto.String("proto3"),
 		Name:        proto.String("example.proto"),
 		Package:     proto.String("example"),
-		MessageType: mt,
+		MessageType: []*descriptorpb.DescriptorProto{
+			// define Foo message
+			&descriptorpb.DescriptorProto{
+				Name: proto.String("Foo"),
+				Field: []*descriptorpb.FieldDescriptorProto{
+					{
+						Name:     proto.String("id"),
+						JsonName: proto.String("id"),
+						Number:   proto.Int32(1),
+						Type:     descriptorpb.FieldDescriptorProto_Type(pref.Int32Kind).Enum(),
+					},
+					{
+						Name:     proto.String("title"),
+						JsonName: proto.String("title"),
+						Number:   proto.Int32(2),
+						Type:     descriptorpb.FieldDescriptorProto_Type(pref.StringKind).Enum(),
+					},
+				},
+			},
+
+			// define Bar message
+			&descriptorpb.DescriptorProto{
+				Name: proto.String("Bar"),
+				Field: []*descriptorpb.FieldDescriptorProto{
+					{
+						Name:     proto.String("bar_map"),
+						JsonName: proto.String("bar_map"),
+						Number:   proto.Int32(1),
+						Label:    descriptorpb.FieldDescriptorProto_Label(pref.Repeated).Enum(),
+						Type:     descriptorpb.FieldDescriptorProto_Type(pref.MessageKind).Enum(),
+						TypeName: proto.String(".example.Bar.BarMapEntry"),
+					},
+				},
+				NestedType: []*descriptorpb.DescriptorProto{
+					{
+						Name: proto.String("BarMapEntry"),
+						Field: []*descriptorpb.FieldDescriptorProto{
+							{
+								Name:     proto.String("key"),
+								JsonName: proto.String("key"),
+								Number:   proto.Int32(1),
+								Label:    descriptorpb.FieldDescriptorProto_Label(pref.Optional).Enum(),
+								Type:     descriptorpb.FieldDescriptorProto_Type(pref.StringKind).Enum(),
+							}, {
+								Name:     proto.String("value"),
+								JsonName: proto.String("value"),
+								Number:   proto.Int32(2),
+								Label:    descriptorpb.FieldDescriptorProto_Label(pref.Optional).Enum(),
+								Type:     descriptorpb.FieldDescriptorProto_Type(pref.MessageKind).Enum(),
+								TypeName: proto.String(".example.Foo"),
+							},
+						},
+						Options: &descriptorpb.MessageOptions{
+							MapEntry: proto.Bool(true),
+						},
+					},
+				},
+			},
+
+			// define Baz message
+			&descriptorpb.DescriptorProto{
+				Name: proto.String("Baz"),
+				Field: []*descriptorpb.FieldDescriptorProto{
+					{
+						Name:     proto.String("baz_list"),
+						JsonName: proto.String("baz_list"),
+						Number:   proto.Int32(1),
+						Label:    descriptorpb.FieldDescriptorProto_Label(pref.Repeated).Enum(),
+						Type:     descriptorpb.FieldDescriptorProto_Type(pref.MessageKind).Enum(),
+						TypeName: proto.String(".example.Foo"),
+					},
+				},
+			},
+
+		},
 	}
 
 	// get FileDescriptor
@@ -41,82 +101,13 @@ func makeFileDescriptor() pref.FileDescriptor {
 }
 
 func makeFooMessageDescriptorProto() *descriptorpb.DescriptorProto {
-	fooDescriptorProto := &descriptorpb.DescriptorProto{
-		Name: proto.String("Foo"),
-		Field: []*descriptorpb.FieldDescriptorProto{
-			{
-				Name:     proto.String("id"),
-				JsonName: proto.String("id"),
-				Number:   proto.Int32(1),
-				Type:     descriptorpb.FieldDescriptorProto_Type(pref.Int32Kind).Enum(),
-			},
-			{
-				Name:     proto.String("title"),
-				JsonName: proto.String("title"),
-				Number:   proto.Int32(2),
-				Type:     descriptorpb.FieldDescriptorProto_Type(pref.StringKind).Enum(),
-			},
-		},
-	}
+	fooDescriptorProto :=
 	return fooDescriptorProto
 }
 
 func makeBarMessageDescriptorProto() *descriptorpb.DescriptorProto {
-	barDescriptorProto := &descriptorpb.DescriptorProto{
-		Name: proto.String("Bar"),
-		Field: []*descriptorpb.FieldDescriptorProto{
-			{
-				Name:     proto.String("bar_map"),
-				JsonName: proto.String("bar_map"),
-				Number:   proto.Int32(1),
-				Label:    descriptorpb.FieldDescriptorProto_Label(pref.Repeated).Enum(),
-				Type:     descriptorpb.FieldDescriptorProto_Type(pref.MessageKind).Enum(),
-				TypeName: proto.String(".example.Bar.BarMapEntry"),
-			},
-		},
-		NestedType: []*descriptorpb.DescriptorProto{
-			{
-				Name: proto.String("BarMapEntry"),
-				Field: []*descriptorpb.FieldDescriptorProto{
-					{
-						Name:     proto.String("key"),
-						JsonName: proto.String("key"),
-						Number:   proto.Int32(1),
-						Label:    descriptorpb.FieldDescriptorProto_Label(pref.Optional).Enum(),
-						Type:     descriptorpb.FieldDescriptorProto_Type(pref.StringKind).Enum(),
-					}, {
-						Name:     proto.String("value"),
-						JsonName: proto.String("value"),
-						Number:   proto.Int32(2),
-						Label:    descriptorpb.FieldDescriptorProto_Label(pref.Optional).Enum(),
-						Type:     descriptorpb.FieldDescriptorProto_Type(pref.MessageKind).Enum(),
-						TypeName: proto.String(".example.Foo"),
-					},
-				},
-				Options: &descriptorpb.MessageOptions{
-					MapEntry: proto.Bool(true),
-				},
-			},
-		},
-	}
+	barDescriptorProto :=
 	return barDescriptorProto
-}
-
-func makeBazMessageDescriptorProto() *descriptorpb.DescriptorProto {
-	bazDescriptorProto := &descriptorpb.DescriptorProto{
-		Name: proto.String("Baz"),
-		Field: []*descriptorpb.FieldDescriptorProto{
-			{
-				Name:     proto.String("baz_list"),
-				JsonName: proto.String("baz_list"),
-				Number:   proto.Int32(1),
-				Label:    descriptorpb.FieldDescriptorProto_Label(pref.Repeated).Enum(),
-				Type:     descriptorpb.FieldDescriptorProto_Type(pref.MessageKind).Enum(),
-				TypeName: proto.String(".example.Foo"),
-			},
-		},
-	}
-	return bazDescriptorProto
 }
 
 func makeFooMsg(fd pref.FileDescriptor) *dynamicpb.Message {
