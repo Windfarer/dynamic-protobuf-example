@@ -100,16 +100,6 @@ func makeFileDescriptor() pref.FileDescriptor {
 	return fd
 }
 
-func makeFooMessageDescriptorProto() *descriptorpb.DescriptorProto {
-	fooDescriptorProto :=
-	return fooDescriptorProto
-}
-
-func makeBarMessageDescriptorProto() *descriptorpb.DescriptorProto {
-	barDescriptorProto :=
-	return barDescriptorProto
-}
-
 func makeFooMsg(fd pref.FileDescriptor) *dynamicpb.Message {
 	fooMessageDescriptor := fd.Messages().ByName("Foo")
 	msg := dynamicpb.NewMessage(fooMessageDescriptor)
